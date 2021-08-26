@@ -9,11 +9,14 @@ import Single_Trial_Change_Detection
 import serial
 import os
 
+title = "Change_Detection"
+date = data.getDateStr()
+
 # Making the mouse show up at the beginning
 Single_Trial_Change_Detection.mouse.setVisible(1)
 
 # Create a data folder to save files to
-dataFolder = os.getcwd() + '/data/'
+dataFolder = os.getcwd() + os.sep + 'data' + os.sep
 if not os.path.exists(dataFolder): 
     os.makedirs(dataFolder)
 
@@ -27,6 +30,12 @@ if study_info_dialog.OK:
 else:
     core.quit()  # If you click "cancel" instead of "OK", closes program
 
+IDfolder = dataFolder + os.sep + 'ID_' + str(study_info['Participant_ID'])
+if not os.path.exists(IDfolder):
+    os.makedirs(IDfolder)
+
+dataFileName = IDfolder + os.sep + u'%s_%s_%s' % (study_info['Participant_ID'], title, date)
+
 # Creating structure of whole experiment
 exp = data.ExperimentHandler(name='change_detection',
                 version='0.1',
@@ -34,7 +43,7 @@ exp = data.ExperimentHandler(name='change_detection',
                 runtimeInfo=None,
                 originPath=None,
                 saveWideText=True,
-                dataFileName=output_file_name)
+                dataFileName=dataFileName)
 
 # Making fullscreen for performance
 Single_Trial_Change_Detection.win.winHandle.minimize()

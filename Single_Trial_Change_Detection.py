@@ -180,7 +180,6 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
         win.flip()
         reaction_time_clock = core.MonotonicClock()  # Starting to measure RT
     if block_number != 0:
-        fixation_trigger = 99
         port.write(int(99).to_bytes(length = 1, byteorder = "little"))  # Sending EEG code just after single stim appears
 
     # If no answer is made, accuracy and reaction_time values will remain at 0
