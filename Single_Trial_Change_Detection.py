@@ -5,7 +5,6 @@ import Bilateral_Positions
 
 # 'z' key signifies no change, '/' (slash) signifies change
 
-
 random.seed()  #Setting current time as seed for random number generation
 
 # Setting up screen constants
@@ -44,6 +43,15 @@ x_axis_limit = int(win.size[0]/1.35)/2 - stim_size
 y_axis_limit = int(win.size[1]/1.35)/2 - stim_size
 
 fixation = visual.Circle(win, units = 'pix', radius = 6, fillColor = 'black', lineColor = 'black')
+fixation2 = visual.TextStim(win=win, name='fix2',
+    text='?',
+    font='Open Sans',
+    units = 'pix',
+    pos=(0, 0), height=20, wrapWidth=None, ori=0.0, 
+    color='black', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);
+
 # Creating a buffer zone for the fixation point so stimuli will always appear their own length away
 # from center point of the screen
 fixation_buffer = visual.Circle(win, units='pix', radius = (stim_size), fillColor = None, lineColor = None)
@@ -134,6 +142,7 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
 
     # Drawing initial screen with stimuli
     fixation.setAutoDraw(True)
+    
     square1.draw()
     if stim_number >= 2:
         square2.draw()
@@ -158,11 +167,14 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
     #reaction_time_clock = core.MonotonicClock()  # Starting to measure RT
     if block_number != 0:
         port.write(stim_number_code.to_bytes(length = 1, byteorder = "little"))  # Sending EEG code with number of stim just after stim appear
-    core.wait(0.25, hogCPUperiod=0.1) # Holding this screen for 250ms
+    core.wait(0.500, hogCPUperiod=0.1) # Holding this screen for 500ms
     win.flip() # Displaying fixation only
     if block_number != 0:
         port.write(retention_code.to_bytes(length = 1, byteorder = "little"))  # Sending EEG code when stim disappear
     core.wait(1, hogCPUperiod=0.2) # Holding this screen for 1s retention period
+
+    fixation.setAutoDraw(False)
+    fixation2.setAutoDraw(True)
 
     # Redrawing Stim 1
     # Color will be same or different depending on value of is_changed
@@ -193,18 +205,20 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
     # Participant has 1500ms to answer before trial moves on
     # To change how much time they have to answer, change value of maxWait in next line
     # Time is in seconds
-    key_pressed = event.waitKeys(maxWait=1.5, keyList=['escape', 'z', 'slash'])
+    key_pressed = event.waitKeys(maxWait=1.5, keyList=['escape', '3', '4'])
     if key_pressed == ['escape']:
             win.close()
             core.quit()
-    elif key_pressed == ['z']:
+    elif key_pressed == ['3']:
+        fixation2.setAutoDraw(False)
         reaction_time = reaction_time_clock.getTime()
         choice_number = 0
         if is_changed:
             accuracy = 0
         else:
             accuracy = 1
-    elif key_pressed == ['slash']:
+    elif key_pressed == ['4']:
+        fixation2.setAutoDraw(False)
         reaction_time = reaction_time_clock.getTime()
         choice_number = 1
         if is_changed:
@@ -219,6 +233,9 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
         accuracy_code = 80 + accuracy
         port.write(accuracy_code.to_bytes(length = 1, byteorder = "little"))  # Sending code showing whether choice was correct or incorrect
         core.wait(pulse_duration) #need this delay otherwise the accuracy code is sent at the same time as the fixation code and doesn't show up
+
+    fixation2.setAutoDraw(False)
+    fixation.setAutoDraw(True)
     win.flip()  # Displaying fixation only
 
     return choice_number, accuracy, reaction_time
