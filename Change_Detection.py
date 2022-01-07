@@ -24,8 +24,6 @@ if not os.path.exists(dataFolder):
 study_info = {'Participant_ID':0}
 study_info_dialog = gui.DlgFromDict(dictionary=study_info, title='Change Detection')
 if study_info_dialog.OK:
-    # The code below builds the name for each output file. If you want to change the filenames to start with
-    # something other than 'change_detection' you can change the value in the quotes below
     output_file_name = dataFolder + 'change_detection_' + str(study_info['Participant_ID'])
 else:
     core.quit()  # If you click "cancel" instead of "OK", closes program
@@ -70,7 +68,13 @@ practice.data.addDataType('rt')
 exp.addLoop(practice)
 
 # Showing instructions before practice
-Single_Trial_Change_Detection.display_instructions('Instructions_CD.png')
+image_list = ['imgs/instruct.png', 'imgs/fix1.png', 'imgs/stim1.png', 'imgs/fix2.png', 'imgs/resp1.png',
+              'imgs/fix3.png', 'imgs/stim2.png', 'imgs/fix4.png', 'imgs/resp2.png']
+                            
+for image in image_list:
+    Single_Trial_Change_Detection.display_instructions(image)
+    
+Single_Trial_Change_Detection.display_text_instructions(instructions_text = 'Now it\'s time to practice')
 
 # Running practice trials
 # block_number is 0 for practice trials currently - starts at 1 for real trials

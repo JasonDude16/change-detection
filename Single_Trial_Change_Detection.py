@@ -5,7 +5,7 @@ import Bilateral_Positions
 
 # 'z' key signifies no change, '/' (slash) signifies change
 
-random.seed()  #Setting current time as seed for random number generation
+random.seed()#Setting current time as seed for random number generation
 
 # Setting up screen constants
 
@@ -70,12 +70,14 @@ def create_new_stimulus(chosen_pos):
 def display_instructions(image_filename):
     instruction_image = visual.SimpleImageStim(win, image=image_filename)
     instruction_image.draw()
-    instruction_text = """This task will flash different numbers of colored boxes scattered around the screen. Your job is to remember what color each box was.
-
-First you'll see the dot, and then the boxes will flash very quickly, and then disappear. Next, only one box will appear on the screen.
-
-Your job is to say whether the color of the box is the same, or different. If they were the same, then you would press the 'YES' button. If they were different, you would press the 'NO' button."""
-    instruction_text = visual.TextStim(win, text=instruction_text, pos = [0, 300])
+    win.flip()
+    core.wait(1)  # Prevents subject from clicking through instructions by accident
+    event.waitKeys(keyList = ['space']) # Waits for space key to continue
+    fixation.draw()
+    win.flip()
+    
+def display_text_instructions(instructions_text):
+    instruction_text = visual.TextStim(win, text=instructions_text, pos = [0, 0], height = 40)
     instruction_text.draw()
     win.flip()
     core.wait(1)  # Prevents subject from clicking through instructions by accident
@@ -91,8 +93,7 @@ When you are ready, press any key to continue."""
     block_end_message.draw()
     win.flip()    
     core.wait(3)  # Prevents subject from clicking through by accident, encourages them to take break
-    # Waits for any key to continue
-    event.waitKeys()
+    event.waitKeys() # Waits for any key to continue
     fixation.draw()
     win.flip()
 
@@ -164,11 +165,13 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
         core.wait(pulse_duration)  # Waiting 100ms to make sure previous code is received
         
     win.flip()  # Displaying fixation and stimuli
+    
     #reaction_time_clock = core.MonotonicClock()  # Starting to measure RT
     if block_number != 0:
         port.write(stim_number_code.to_bytes(length = 1, byteorder = "little"))  # Sending EEG code with number of stim just after stim appear
     core.wait(0.500, hogCPUperiod=0.1) # Holding this screen for 500ms
     win.flip() # Displaying fixation only
+    
     if block_number != 0:
         port.write(retention_code.to_bytes(length = 1, byteorder = "little"))  # Sending EEG code when stim disappear
     core.wait(1, hogCPUperiod=0.2) # Holding this screen for 1s retention period
