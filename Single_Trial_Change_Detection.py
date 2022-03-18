@@ -205,29 +205,36 @@ def run_trial(trial_stim_number, is_changed, block_number, trial_number, port):
 
     # 'z' key signifies no change, '/' (slash) signifies change
     # Participant can also press escape key to exit experiment prematurely
-    # Participant has 1500ms to answer before trial moves on
-    # To change how much time they have to answer, change value of maxWait in next line
+    # Participant has 2000ms to answer before trial moves on
+    # To change how much time they have to answer, change value of max_wait in next line
     # Time is in seconds
-    key_pressed = event.waitKeys(maxWait=1.5, keyList=['escape', '3', '4'])
-    if key_pressed == ['escape']:
+    max_wait = 2
+    key_pressed = event.waitKeys(maxWait=max_wait, keyList=['escape', '3', '4'])
+    rt = reaction_time_clock.getTime()
+    wait_time = max_wait - rt
+    
+    if key_pressed in [['3'], ['4'], ['escape']]:
+        if key_pressed == ['escape']:
             win.close()
             core.quit()
-    elif key_pressed == ['3']:
-        fixation2.setAutoDraw(False)
-        reaction_time = reaction_time_clock.getTime()
-        choice_number = 0
-        if is_changed:
-            accuracy = 0
-        else:
-            accuracy = 1
-    elif key_pressed == ['4']:
-        fixation2.setAutoDraw(False)
-        reaction_time = reaction_time_clock.getTime()
-        choice_number = 1
-        if is_changed:
-            accuracy = 1
-        else:
-            accuracy = 0
+        elif key_pressed == ['3']:
+            fixation2.setAutoDraw(False)
+            reaction_time = rt
+            choice_number = 0
+            if is_changed:
+                accuracy = 0
+            else:
+                accuracy = 1
+        elif key_pressed == ['4']:
+            fixation2.setAutoDraw(False)
+            reaction_time = rt
+            choice_number = 1
+            if is_changed:
+                accuracy = 1
+            else:
+                accuracy = 0
+    
+    core.wait(wait_time)
 
     choice_code = 10 + choice_number  # Sending code with choice of particpant
     if block_number != 0:
