@@ -54,7 +54,7 @@ Single_Trial_Change_Detection.win.flip()
 
 # Setting up serial port
 # Make sure the value below is correct for our computers - may be D010 or 037F or 0278
-port = serial.Serial('COM4')
+# port = serial.Serial('COM4')
 
 # Loading external file of practice conditions (must be in same directory)
 # If you want different numbers of stimuli to appear you will need to change the possiblities in this file
@@ -81,7 +81,7 @@ Single_Trial_Change_Detection.display_text_instructions(instructions_text = 'Now
 # (This shows up later in EEG code values.)
 block_number = 0
 for trial in practice:
-    trial_data = Single_Trial_Change_Detection.run_trial(int(trial['number_of_stim']), int(trial['change']), block_number, practice.thisTrialN+1, port)
+    trial_data = Single_Trial_Change_Detection.run_trial(int(trial['number_of_stim']), int(trial['change']), block_number, practice.thisTrialN+1)
     practice.addData('choice', trial_data[0])
     practice.addData('accuracy', trial_data[1]) 
     practice.addData('rt', trial_data[2])
@@ -118,7 +118,7 @@ for thisRep in block_loop:
     
     # Running trials
     for trial in trials:
-        trial_data = Single_Trial_Change_Detection.run_trial(int(trial['number_of_stim']), int(trial['change']), block_number, trials.thisN+1, port)
+        trial_data = Single_Trial_Change_Detection.run_trial(int(trial['number_of_stim']), int(trial['change']), block_number, trials.thisN+1)
         trials.addData('choice', trial_data[0])
         trials.addData('accuracy', trial_data[1])
         trials.addData('rt', trial_data[2])
